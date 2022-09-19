@@ -4,12 +4,14 @@ import connectDB from './connectDB.js'
 import Article from './ArticleSchema.js'
 import User from './UserSchema.js'
 import asyncHandler from 'express-async-handler'
+import jwt from 'jsonwebtoken'
 
 dotenv.config()
 
 const app = express()
 
-app.use(express.json())
+app.use(express.json({limit: "200mb"}))
+app.use(express.urlencoded({ extended: true, limit: '50mb' }));
 const PORT = process.env.PORT || 4000
 
 app.listen(PORT, ()=>{
@@ -23,11 +25,71 @@ app.get("/", async (req, res)=>{
 connectDB();
 
 
+
+
+//////JSONWEBTOKEN
+
+
+const generateToken = (id) => {
+   return jwt.sign({id}, process.env.JWT_SECRETE,{ expiresIn: "30d" })
+}
+
+/////////////////PROTECTED ROUTES/////////////////
+const protect = asyncHandler(async (req, res, next) => {
+
+    let token
+
+    if(req.headers.authorization && req.headers.authorization.startsWith('Bearer')){
+        try {
+            token = req.headers.authorization.split(' ')[1]
+
+            const decoded = jwt.verify(token, process.env.JWT_SECRETE)
+
+
+            req.user = await User.findById(decoded.id).select('-password')
+
+            next()
+            
+        } catch (error) {
+            console.error(error)
+            res.status(401)
+            throw new Error('Not authorized')
+            
+        }
+    }
+
+    if(!token){
+        res.status(401)
+        throw new Error('Not auhtorized, no token')
+    }
+
+  
+})
+
+
+const admin = asyncHandler(
+    async (req, res, next) => {
+    
+        if (req.user && req.user.isAdmin) {
+    
+            next()
+            
+        } else {
+    
+            res.status(401)
+            throw new Error('Not Authorized as an admin')
+            
+        }
+    }
+)
+
+
+
 //////// User Routes ///////
 
 app.post('/api/users', asyncHandler(
     async (req, res)  => {
-        const {name, email, password} = req.body;
+        const {name, email, password, isAdmin} = req.body;
      
          const userExists = await User.findOne({email})
      
@@ -36,14 +98,15 @@ app.post('/api/users', asyncHandler(
              throw new error("User already exist!")
          }
      
-         const user = await User.create({name, email, password})
+         const user = await User.create({name, email, password, isAdmin})
      
          if(user){
              res.status(201).json({
                  _id: user._id,
                  name: user.name,
                  email: user.email,
-                 isAdmin: user.isAdmin
+                 isAdmin: user.isAdmin,
+                 token:generateToken(user._id)
              })
          }else{
              res.status(400)
@@ -56,7 +119,7 @@ app.post('/api/users', asyncHandler(
 
 app.post('/api/users/login', asyncHandler(
     async (req, res) => {
-        const { email, password} = req.body
+        const { email, password } = req.body
     
         const user = await User.findOne({email})
     
@@ -65,7 +128,8 @@ app.post('/api/users/login', asyncHandler(
             _id: user._id,
             name: user.name,
             email: user.email,
-            isAdmin: user.isAdmin
+            isAdmin: user.isAdmin,
+            token:generateToken(user._id)
            })
     
         }else{
@@ -78,13 +142,13 @@ app.post('/api/users/login', asyncHandler(
     }
 ))
 
-app.get('/api/users', asyncHandler(async (req, res) => {
+app.get('/api/users',protect, admin, asyncHandler(async (req, res) => {
     const users = await User.find({})
     res.json(users)
 
 }))
 
-app.put('/api/users/:id', asyncHandler(
+app.put('/api/users/:id',protect,admin, asyncHandler(
     async (req, res) => {
         const user = await User.findById(req.params.id)
     
@@ -104,6 +168,7 @@ app.put('/api/users/:id', asyncHandler(
                 name: updateUser.name,
                 email:updateUser.email,
                 isAdmin:updateUser.isAdmin,
+                token:generateToken(user._id)
             })
            
         } else{
@@ -113,7 +178,7 @@ app.put('/api/users/:id', asyncHandler(
     }
 ))
 
-app.delete('/api/users/:id', asyncHandler(
+app.delete('/api/users/:id', protect,admin, asyncHandler(
     async (req, res) => {
 
         const user =  await User.findById(req.params.id)
@@ -136,19 +201,20 @@ app.delete('/api/users/:id', asyncHandler(
 
 //////// Article Routes ///////
 
-app.post('/api/articles', asyncHandler(
+app.post('/api/articles',protect,admin, asyncHandler(
     async (req, res) => {
 
-        const {category, title, author, body, image, summary} = req.body;
+        const {category, title ,date, author, body, image, summary} = req.body;
     
     
-        const article = await Article.create({category, title, author, body, image, summary})
+        const article = await Article.create({category, title, date, author, body, image, summary})
     
         if(article){
             res.status(201).json({
                 _id: article._id,
                 category: article.category, 
                 title: article.title, 
+                date: article.date, 
                 author: article.author, 
                 body: article.body, 
                 image: article.image, 
@@ -172,6 +238,7 @@ app.get('/api/articles/:id', asyncHandler(
                 _id: article._id,
                 category: article.category, 
                 title: article.title, 
+                date: article.date,
                 author: article.author, 
                 body: article.body, 
                 image: article.image, 
@@ -196,7 +263,7 @@ app.get('/api/articles', asyncHandler(
     }
 ))
 
-app.put('/api/articles/:id', asyncHandler(
+app.put('/api/articles/:id', protect, admin, asyncHandler(
     async (req, res) => {
         const article = await Article.findById(req.params.id)
     
@@ -204,6 +271,7 @@ app.put('/api/articles/:id', asyncHandler(
             article.category = req.body.category || article.category
             article.title = req.body.title || article.title
             article.author = req.body.author|| article.author
+            article.date = req.body.date|| article.date
             article.body = req.body.body || article.body
             article.image =  req.body.image || article.image
             article.summary = req.body.summary || article.summary
@@ -215,6 +283,7 @@ app.put('/api/articles/:id', asyncHandler(
                 category:updateArticle.category,   
                 title: updateArticle.title,
                 author:updateArticle.author,
+                date:updateArticle.date,
                 body:updateArticle.body,
                 image:updateArticle.image,
                 summary:updateArticle.summary
@@ -229,7 +298,7 @@ app.put('/api/articles/:id', asyncHandler(
     }
 ))
 
-app.delete('/api/articles/:id', asyncHandler(
+app.delete('/api/articles/:id',protect,admin, asyncHandler(
     async (req, res) => {
         const article = await Article.findById(req.params.id)
     
@@ -270,7 +339,7 @@ app.post('/api/articles/:id/comments', asyncHandler(async (req, res) => {
 }))
 
 
-app.delete('/api/articles/:id/comments/:comment_id', asyncHandler(async (req, res) => {
+app.delete('/api/articles/:id/comments/:comment_id',admin,protect, asyncHandler(async (req, res) => {
 
         const article = await Article.findById(req.params.id)
     

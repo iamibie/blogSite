@@ -10,6 +10,9 @@ const ArticleSchema = mongoose.Schema({
     title: {
         type:String,
     },
+    date: {
+        type:String,
+    },
     author:{
         type:String
     },

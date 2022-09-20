@@ -52,6 +52,7 @@
   width: 100vw;
   height: 30vh;
   background-color: var(--independence);
+  overflow: hidden;
   
 }
 
@@ -66,24 +67,19 @@
   justify-content: center;
   align-items: center;
   z-index: 1000;
+  overflow: hidden;
 }
 .navBar {
   background-color: var(--english-violet);
   display: flex;
   justify-content: space-evenly;
   align-items: center;
-  width: 100%;
+  width: 100vw;
   height: 7vh;
   position: relative;
   font-family: 'Amatic SC', 'cursive';
   font-size: 1.5rem;
- 
-}
-
-.nav-active {
-  position: sticky;
-  top: 0;
-  width: 100vw;
+  overflow: hidden;
 }
 
 
@@ -119,7 +115,7 @@
 
 /*****/
 #cat-section{
-  width: 100%;
+  width: 100vw;
   height: 5vh;
   border: none;
   display: flex;
@@ -383,6 +379,10 @@ footer{
   transition: ease .4s;
   background-color: var(--blue-munsell);
   font-family: 'Amatic SC', 'cursive';
+
+  position: static;
+  bottom: 0;
+  left: 0;
   
 
 }

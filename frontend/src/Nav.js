@@ -20,7 +20,7 @@ const Nav = () => {
 
     if(showMenu){
         menuItems = 
-        <div style={{position:"absolute", top:"15%", right:"3%", display:"flex" ,flexDirection:"row"}} className="menu-items">
+        <div style={{position:"absolute", top:"15%", right:"3%", display:"flex" ,flexDirection:"row", overflow:"hidden"}} className="menu-items">
             {userInfo ? <div style={{margin:"10px"}}> <a style={{marginRight:"10px"}} href="/profile">Profile</a> <a style={{marginLeft:"0"}} href="#" onClick={logoutHandler}>Logout</a> </div> : <Link to='/login'>Login</Link>}
             {userInfo && userInfo.isAdmin && <a style={{margin:"5px"}} href='/create/article'>createPost</a>}
         </div>

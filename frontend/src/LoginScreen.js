@@ -17,19 +17,19 @@ const LoginScreen = ({history}) => {
     const navigate = useNavigate()
 
     const login = useSelector(state=> state.login)
-    const {userInfo} = login
+    const {loginData} = login
 
    
     const redirect = location.search ? location.search.split('=')[1] : '/'
 
   useEffect(() => {
     
-      if(userInfo){
+      if(loginData){
           navigate(redirect)
           
       }
 
-  }, [userInfo,redirect,navigate ])
+  }, [navigate, loginData, redirect])
 
 
     const submitHandler = (e) => {

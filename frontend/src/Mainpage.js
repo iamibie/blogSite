@@ -66,7 +66,8 @@ const Mainpage = () => {
                             <button onClick={() => catHandler("Science")} className="li" >Science</button>
                             <button onClick={() => catHandler("Politics")}className="li" >Politics</button>
                             <button onClick={()=> setCategory(articles)}className="li" >All</button>
-             </div>
+        </div>
+        
         <div className="main-screen">
 
 

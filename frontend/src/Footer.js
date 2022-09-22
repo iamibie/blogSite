@@ -10,9 +10,9 @@ const Footer = () => {
                     <a href='https://www.linkedin.com/in/ibrahimmahamane/'><img src="/img/linkedin.png" alt="Linkedin"/></a>
                    <a href=''><img src="/img/twitter.png" alt="Twitter"/></a>
                 </div>
-            <hr width="300px" style={{border:" solid #cf5c36ff"}}/>
+            <hr width="300px" style={{border:" solid #cf5c36ff", margin:"0"}}/>
                 <div id="ph-em" >
-                    <a href='mailto:iamahamane@gmail.com'><p>iamahamane@gmail.com</p></a>
+                    <a href='mailto:iamahamane@gmail.com' ><p style={{margin:'0'}}>iamahamane@gmail.com</p></a>
                 </div>
         </div>
    </footer>

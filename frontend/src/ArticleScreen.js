@@ -4,6 +4,8 @@ import { useParams} from 'react-router-dom'
 import { getArticleAction } from './actions'
 import Footer from './Footer'
 import Nav from './Nav'
+import Loader from './Loader'
+import Message from './Message'
 
 
 const ArticleScreen = ({match}) => {
@@ -11,7 +13,7 @@ const ArticleScreen = ({match}) => {
     const params = useParams()
 
     const getArticle = useSelector(state => state.getArticle)
-    const {article} = getArticle
+    const {loading, error, article} = getArticle
 
    
   
@@ -30,7 +32,9 @@ const ArticleScreen = ({match}) => {
          <Nav/>
            
            
-           {article ? 
+           {loading ? ( <Loader/> ) : error ? (<Message variant='danger'>{error}</Message>) :
+            (
+            article ? 
             <div key={article._id} className="article-div">
                <h1>{article.title}</h1>
                <div className="d-a">
@@ -39,7 +43,9 @@ const ArticleScreen = ({match}) => {
                </div>
                <img src={article.image} alt="" />
                <div  className='art-body' dangerouslySetInnerHTML={{__html: article.body}} id={article._id}></div>
-            </div> : null }
+            </div>
+            : null
+            )}
        
 
            <Footer/> 

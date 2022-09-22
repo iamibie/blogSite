@@ -360,7 +360,7 @@ app.delete('/api/articles/:id/comments/:comment_id',admin,protect, asyncHandler(
     
 }))
 
-
+const __dirname = path.resolve
 if(process.env.NODE_ENV === 'production'){
     app.use(express.static('/frontend/build'))
 

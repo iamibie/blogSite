@@ -1,6 +1,6 @@
-import './index.css'
-import{ BrowserRouter as Router, Route, Routes} from 'react-router-dom'
+import './index.css';
 
+import{ BrowserRouter as Router, Route, Routes} from 'react-router-dom'
 import Mainpage from './Mainpage'
 import Footer from './Footer';
 import Nav from './Nav';

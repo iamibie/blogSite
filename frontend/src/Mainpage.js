@@ -69,53 +69,54 @@ const Mainpage = () => {
                             <button onClick={()=> setCategory(articles)}className="li" >All</button>
         </div>
         
-        <div className="main-screen">
+    
 
+         <div className="main-screen">
+                {loading ? ( <Loader/> ) : error ? (<Message variant='danger'>{error}</Message>) : (
 
-             {loading ? ( <Loader/> ) : error ? (<Message variant='danger'>{error}</Message>) : (
-                category ? category.map(article =>  { 
-                    return(
-                        <>
-                        
-                           <div className='card-container'>
-                           <h3 onClick={()=>navigate(`/articles/${article._id}`)} >{article.title}</h3>
-                           <img onClick={()=>navigate(`/articles/${article._id}`)} src={article.image} alt="" />
-                            <p className='summ'>{article.summary}</p>
-                            <div className="date-auth">
-                            <p>By:{article.author}</p>
-                            <p>Posted:{article.date}</p>
-                            </div>
-                            {userInfo ? userInfo.isAdmin && <div className='edit-btns'> <a href='#' onClick={()=>navigate(`/articles/edit/${article._id}`)}>Edit</a><a href='#' onClick={() => deleteArticle(article._id)}>Delete</a></div>:null}
-                           </div>
-                           
-                     
-                        </>)
-
-                    }):articles ? articles.map(article =>  { 
-
-                    return(
-                        <>
-                        
-                            <div className='card-container'>
-                            <h3 onClick={()=>navigate(`/articles/${article._id}`)}>{article.title}</h3>
-                            <img onClick={()=>navigate(`/articles/${article._id}`)} src={article.image} alt=""/>
-                            <p className='summ'>{article.summary}</p>
-                            <div className="date-auth">
-                            <p>By:{article.author}</p>
-                            <p>Posted:{article.date}</p>
-                           </div>
-                            {userInfo ? userInfo.isAdmin && <div className='edit-btns' > <a onClick={()=>navigate(`/articles/edit/${article._id}`)}>Edit</a><a onClick={() => deleteArticle(article._id)}>Delete</a></div>:null}
-                            </div>
+                            category ? category.map(article =>  { 
+                            return(
+                                <>
+                                
+                                <div className='card-container'>
+                                <h3 onClick={()=>navigate(`/articles/${article._id}`)} >{article.title}</h3>
+                                <img onClick={()=>navigate(`/articles/${article._id}`)} src={article.image} alt="" />
+                                    <p className='summ'>{article.summary}</p>
+                                    <div className="date-auth">
+                                    <p>By:{article.author}</p>
+                                    <p>Posted:{article.date}</p>
+                                    </div>
+                                    {userInfo ? userInfo.isAdmin && <div className='edit-btns'> <a href='#' onClick={()=>navigate(`/articles/edit/${article._id}`)}>Edit</a><a href='#' onClick={() => deleteArticle(article._id)}>Delete</a></div>:null}
+                                </div>
+                                
                             
-                      
-                        </>) }) : error
-             )}
+                                </>)
+
+                                            }):articles ? articles.map(article =>  { 
+
+                            return(
+                                <>
+                                
+                                    <div className='card-container'>
+                                    <h3 onClick={()=>navigate(`/articles/${article._id}`)}>{article.title}</h3>
+                                    <img onClick={()=>navigate(`/articles/${article._id}`)} src={article.image} alt=""/>
+                                    <p className='summ'>{article.summary}</p>
+                                    <div className="date-auth">
+                                    <p>By:{article.author}</p>
+                                    <p>Posted:{article.date}</p>
+                                </div>
+                                    {userInfo ? userInfo.isAdmin && <div className='edit-btns' > <a onClick={()=>navigate(`/articles/edit/${article._id}`)}>Edit</a><a onClick={() => deleteArticle(article._id)}>Delete</a></div>:null}
+                                    </div>
+                                    
+                            
+                </>) }) : error)}
+         </div>
                 
-        </div>
         <Footer/> 
-        </>
+         </>
     )
     
 }
 
+///<div className="main-screen">
 export default Mainpage

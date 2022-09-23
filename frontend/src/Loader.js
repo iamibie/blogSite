@@ -4,7 +4,6 @@ import { ThreeDots } from  'react-loader-spinner'
 
 const Loader = () => {
     return (
-
                 <ThreeDots 
                 height="80" 
                 width="80" 

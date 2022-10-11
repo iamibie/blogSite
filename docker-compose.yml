@@ -1,0 +1,62 @@
+version: '3.8'
+
+services:
+  backend:
+    build:
+      context: ./
+      dockerfile: Dockerfile
+    image: backend-img
+    container_name: backend-container
+    command: /usr/src/app/node_modules/.bin/nodemon server.js
+    volumes:
+      - ./:/usr/src/app
+      - /usr/src/app/node_modules
+    #ports:
+     # - "5000:5000"
+    env_file: ./.env
+    networks:
+      - app-network
+ 
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    image: frontend-img
+    container_name: frontend-container
+    command: npm start
+    volumes:
+      - ./frontend/:/usr/app
+      - /usr/app/node_modules
+    depends_on:
+      - backend
+    #ports:
+      #- "3000:3000"
+    networks:
+      - app-network
+    stdin_open: true
+    tty: true
+
+  nginx:
+    depends_on:
+      - backend
+      - frontend
+    build:
+      context: ./nginx
+      dockerfile: Dockerfile
+    networks:
+      - app-network
+    ports: 
+      - 8080:80
+    restart: always
+
+
+networks:
+    app-network:
+        driver: bridge
+
+volumes:
+    data-volume:
+    node_modules:
+    web-root:
+      driver: local
+
